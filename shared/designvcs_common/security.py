@@ -1,0 +1,98 @@
+from __future__ import annotations
+
+import base64
+import hashlib
+import hmac
+import json
+from datetime import UTC, datetime, timedelta
+from typing import Any
+
+from .schemas import Role
+
+PERMISSIONS: dict[Role, set[str]] = {
+    Role.OWNER: {
+        "project:create",
+        "project:read",
+        "project:update",
+        "project:access",
+        "version:upload",
+        "version:read",
+        "version:compare",
+        "collab:comment",
+        "collab:approve",
+        "viewer:preview",
+        "export:pdf",
+        "notification:send",
+    },
+    Role.DESIGNER: {
+        "project:read",
+        "version:upload",
+        "version:read",
+        "version:compare",
+        "collab:comment",
+        "viewer:preview",
+        "export:pdf",
+    },
+    Role.REVIEWER: {
+        "project:read",
+        "version:read",
+        "version:compare",
+        "collab:comment",
+        "collab:approve",
+        "viewer:preview",
+        "export:pdf",
+    },
+    Role.VIEWER: {
+        "project:read",
+        "version:read",
+        "viewer:preview",
+    },
+    Role.ADMIN: {
+        "project:create",
+        "project:read",
+        "project:update",
+        "project:access",
+        "version:upload",
+        "version:read",
+        "version:compare",
+        "collab:comment",
+        "collab:approve",
+        "viewer:preview",
+        "export:pdf",
+        "notification:send",
+        "audit:read",
+    },
+}
+
+
+def has_permission(role: Role | str, action: str) -> bool:
+    normalized = Role(role) if isinstance(role, str) else role
+    return action in PERMISSIONS.get(normalized, set())
+
+
+def _derive_key(secret: str) -> bytes:
+    return hashlib.sha256(secret.encode("utf-8")).digest()
+
+
+def sign_token(payload: dict[str, Any], secret: str, exp_minutes: int = 180) -> str:
+    data = dict(payload)
+    data["exp"] = int((datetime.now(UTC) + timedelta(minutes=exp_minutes)).timestamp())
+    payload_b64 = base64.urlsafe_b64encode(json.dumps(data, separators=(",", ":")).encode("utf-8")).decode("ascii")
+    signature = hmac.new(_derive_key(secret), payload_b64.encode("ascii"), hashlib.sha256).digest()
+    signature_b64 = base64.urlsafe_b64encode(signature).decode("ascii")
+    return f"{payload_b64}.{signature_b64}"
+
+
+def verify_token(token: str, secret: str) -> dict[str, Any] | None:
+    try:
+        payload_b64, signature_b64 = token.split(".", maxsplit=1)
+        expected = hmac.new(_derive_key(secret), payload_b64.encode("ascii"), hashlib.sha256).digest()
+        received = base64.urlsafe_b64decode(signature_b64.encode("ascii"))
+        if not hmac.compare_digest(expected, received):
+            return None
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64.encode("ascii")).decode("utf-8"))
+        if int(payload.get("exp", 0)) < int(datetime.now(UTC).timestamp()):
+            return None
+        return payload
+    except Exception:
+        return None

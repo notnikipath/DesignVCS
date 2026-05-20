@@ -1,0 +1,159 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: designvcs-api-gateway
+    env_file: .env
+    ports:
+      - "8520:8420"
+    depends_on:
+      - project-service
+      - version-service
+      - collaboration-service
+      - viewer-service
+      - export-service
+      - notification-service
+    networks: [designvcs-net]
+
+  project-service:
+    build:
+      context: .
+      dockerfile: project-service/Dockerfile
+    container_name: designvcs-project-service
+    env_file: .env
+    ports:
+      - "31201:8421"
+    depends_on:
+      - postgres
+    networks: [designvcs-net]
+
+  version-service:
+    build:
+      context: .
+      dockerfile: version-service/Dockerfile
+    container_name: designvcs-version-service
+    env_file: .env
+    ports:
+      - "31202:8422"
+    depends_on:
+      - minio
+      - rabbitmq
+      - redis
+      - notification-service
+      - viewer-service
+    networks: [designvcs-net]
+
+  collaboration-service:
+    build:
+      context: .
+      dockerfile: collaboration-service/Dockerfile
+    container_name: designvcs-collaboration-service
+    env_file: .env
+    ports:
+      - "31203:8423"
+    depends_on:
+      - rabbitmq
+      - notification-service
+    networks: [designvcs-net]
+
+  viewer-service:
+    build:
+      context: .
+      dockerfile: viewer-service/Dockerfile
+    container_name: designvcs-viewer-service
+    env_file: .env
+    ports:
+      - "31204:8424"
+    depends_on:
+      - redis
+      - minio
+    networks: [designvcs-net]
+
+  export-service:
+    build:
+      context: .
+      dockerfile: export-service/Dockerfile
+    container_name: designvcs-export-service
+    env_file: .env
+    ports:
+      - "31205:8425"
+    depends_on:
+      - version-service
+    networks: [designvcs-net]
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: designvcs-notification-service
+    env_file: .env
+    ports:
+      - "31206:8426"
+    depends_on:
+      - rabbitmq
+    networks: [designvcs-net]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_GATEWAY_URL: http://localhost:8520
+    container_name: designvcs-frontend
+    env_file: .env
+    ports:
+      - "5178:5178"
+    depends_on:
+      - api-gateway
+    networks: [designvcs-net]
+
+  postgres:
+    image: postgres:16
+    container_name: designvcs-postgres
+    environment:
+      POSTGRES_DB: designvcs
+      POSTGRES_USER: designvcs
+      POSTGRES_PASSWORD: designvcs
+    ports:
+      - "31208:5432"
+    volumes:
+      - designvcs_postgres_data:/var/lib/postgresql/data
+    networks: [designvcs-net]
+
+  minio:
+    image: minio/minio:latest
+    container_name: designvcs-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "31209:9000"
+      - "31210:9001"
+    volumes:
+      - designvcs_minio_data:/data
+    networks: [designvcs-net]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: designvcs-rabbitmq
+    ports:
+      - "31211:5672"
+      - "31212:15672"
+    networks: [designvcs-net]
+
+  redis:
+    image: redis:7
+    container_name: designvcs-redis
+    ports:
+      - "31213:6379"
+    networks: [designvcs-net]
+
+networks:
+  designvcs-net:
+    driver: bridge
+
+volumes:
+  designvcs_postgres_data:
+  designvcs_minio_data:

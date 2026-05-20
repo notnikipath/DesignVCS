@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+
+# Node modules
+node_modules/
+
+# Logs and runtime artifacts
+*.log
+.coverage
+.pytest_cache/
+.ruff_cache/
+
+# Local env overrides
+.env
+
+# Data generated at runtime
+data/minio/*
+!data/minio/.gitkeep

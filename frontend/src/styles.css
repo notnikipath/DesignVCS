@@ -1,0 +1,213 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap");
+
+:root {
+  --bg-start: #09111f;
+  --bg-end: #0f3244;
+  --panel: rgba(11, 24, 45, 0.8);
+  --panel-border: rgba(173, 214, 255, 0.2);
+  --text-main: #f7f5ea;
+  --text-muted: #b9c2d4;
+  --accent: #ffcf70;
+  --accent-2: #66c8e6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  background: radial-gradient(circle at top right, #1f4e65 0, transparent 42%),
+    linear-gradient(150deg, var(--bg-start), var(--bg-end));
+  color: var(--text-main);
+}
+
+.page-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.top-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: var(--accent-2);
+}
+
+h1 {
+  margin: 4px 0 10px;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.05;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.status-badge {
+  border: 1px solid var(--panel-border);
+  background: rgba(102, 200, 230, 0.12);
+  color: #e6f8ff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  border-radius: 18px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.upload-card form,
+.compare-form {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #d5def1;
+}
+
+input,
+select,
+textarea,
+button {
+  border-radius: 10px;
+  border: 1px solid rgba(225, 245, 255, 0.2);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  padding: 10px;
+}
+
+input,
+select,
+textarea {
+  color: var(--text-main);
+  background: rgba(8, 16, 31, 0.75);
+}
+
+textarea {
+  min-height: 74px;
+  resize: vertical;
+}
+
+button {
+  background: linear-gradient(120deg, #ffcf70, #f1a963);
+  color: #18262f;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.03);
+}
+
+.preview-canvas {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 207, 112, 0.35);
+}
+
+.history-list {
+  display: grid;
+  gap: 8px;
+  max-height: 315px;
+  overflow: auto;
+}
+
+.history-item {
+  text-align: left;
+  background: rgba(12, 26, 48, 0.7);
+  color: #ebf0fb;
+  display: grid;
+  gap: 2px;
+}
+
+.history-item.active {
+  outline: 1px solid var(--accent);
+}
+
+.history-item strong {
+  font-size: 12px;
+}
+
+.history-item span {
+  font-size: 13px;
+}
+
+.history-item small {
+  color: #a7b8d2;
+}
+
+.diff-metrics {
+  margin-top: 12px;
+  border-left: 3px solid var(--accent-2);
+  padding-left: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.diff-metrics p {
+  margin: 0;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.health-pill {
+  background: rgba(7, 17, 33, 0.7);
+  border: 1px solid rgba(166, 210, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+}
+
+@media (max-width: 960px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .top-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-shell {
+    padding: 14px;
+  }
+}

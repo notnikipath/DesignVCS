@@ -1,0 +1,1 @@
+"""Shared namespace package for DesignVCS."""
