@@ -1,4 +1,4 @@
-# Task_22_DesignVCS
+# DesignVCS
 
 DesignVCS is a microservice platform for version control of design assets (PSD, AI, Sketch, Figma, JPG/PNG, video/animation), with history, visual diff, collaboration, browser preview, export, and notifications.
 
@@ -43,7 +43,7 @@ L-- tests/
 ## Quick start
 
 ```bash
-cd d:\Шарага\Кинжа8\Task_22_DesignVCS
+cd 'your/project/folder'
 docker compose up --build -d
 ```
 
