@@ -43,7 +43,7 @@ L-- tests/
 ## Quick start
 
 ```bash
-cd 'your/project/folder'
+cd DesignVCS
 docker compose up --build -d
 ```
 

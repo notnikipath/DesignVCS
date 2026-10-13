@@ -1,3 +1,4 @@
+import { AppFrame } from "./AppFrame";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
@@ -48,7 +49,7 @@ class RootErrorBoundary extends React.Component {
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RootErrorBoundary>
-      <App />
+      <AppFrame><App /></AppFrame>
     </RootErrorBoundary>
   </React.StrictMode>,
 );

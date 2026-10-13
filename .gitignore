@@ -22,3 +22,4 @@ node_modules/
 # Data generated at runtime
 data/minio/*
 !data/minio/.gitkeep
+dist/
